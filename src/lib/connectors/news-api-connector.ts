@@ -27,6 +27,7 @@ type CommentItem = {
     content: string;
     date: string;
     user: string;
+    isOwner: boolean;
 }
 
 type NewsItemFull = Omit<NewsItem, 'comments'> & {
@@ -79,5 +80,9 @@ export class NewsApiConnector extends ApiConnector {
 
     async deleteComment(newsId: string, commentId: string) {
         return await this.sendRequest(`${this.base_url}/${newsId}/comment/${commentId}`, 'DELETE') as { result: boolean };
+    }
+
+    async getTodayTopNews() {
+        return await this.sendRequest(`${this.base_url}/top`, 'GET') as NewsData;
     }
 }

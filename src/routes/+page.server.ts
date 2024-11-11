@@ -7,5 +7,15 @@ export const load: PageServerLoad = async (event) => {
 	const offset = event.url.searchParams.get('offset') || 0;
 	const limit = event.url.searchParams.get('limit') || 20;
 
-	return await newsApiConnector.getNews(+offset, +limit);
+	const defaultNews = await newsApiConnector.getNews(+offset, +limit);
+	const topNews = await newsApiConnector.getTodayTopNews();
+
+	const topNewsIds = topNews.news.map((n) => n.id);
+	
+	defaultNews.news = defaultNews.news.filter((n) => !topNewsIds.includes(n.id));
+
+	return {
+		news: defaultNews.news,
+		topNews: topNews.news
+	};
 };

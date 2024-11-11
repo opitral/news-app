@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { Eye, Heart, MessageSquare, ArrowLeft, Send } from 'lucide-svelte';
+	import { Eye, Heart, MessageSquare, ArrowLeft, Send, Trash2 } from 'lucide-svelte';
 	import { getRelativeTime } from '$lib/time-util';
 	import Wrapper from '$lib/components/Wrapper.svelte';
 	import Card from '$lib/components/Card.svelte';
@@ -23,10 +23,10 @@
 
 	function goBack() {
 		if (window.history.length > 1) {
-      history.back();
-    } else {
-      goto('/');
-    }
+			history.back();
+		} else {
+			goto('/');
+		}
 	}
 
 	// console.log(data);
@@ -63,7 +63,7 @@
 						}}
 				>
 					<input name="isLiked" type="hidden" value={data.isLiked} />
-					<button>
+					<button class="transition-transform hover:scale-110">
 						<Heart class="size-7 {data.isLiked ? 'fill-red-500 text-red-500' : ''}" />
 					</button>
 				</form>
@@ -113,7 +113,31 @@
 						<p>{getRelativeTime(comment.date)}</p>
 					</div>
 
-					<p class="mt-1 md:text-lg">{comment.content}</p>
+					<div class="flex items-center justify-between gap-2">
+						<p class="mt-1 md:text-lg">{comment.content}</p>
+
+						{#if comment.isOwner}
+							<form
+								action="?/delete_comment"
+								method="POST"
+								use:enhance={() =>
+									({ result }) => {
+										if (result.type == 'success') {
+											invalidateAll();
+										} else {
+											alert('Failed to delete comment');
+										}
+									}}
+							>
+								<input name="commentId" type="hidden" value={comment.id} />
+								<button>
+									<Trash2
+										class="size-5 text-red-300 transition-[transform,color] hover:scale-110 hover:text-red-500"
+									/>
+								</button>
+							</form>
+						{/if}
+					</div>
 				</div>
 			{:else}
 				<p class="my-5 text-gray-500 text-center">No comments</p>
@@ -141,7 +165,7 @@
 				required
 			/>
 
-			<button class="shrink-0 rounded-md bg-slate-500 p-2 md:p-3 text-white">
+			<button class="shrink-0 rounded-md bg-slate-500 p-2 text-white md:p-3">
 				<Send class="size-5 md:size-6" />
 			</button>
 		</form>

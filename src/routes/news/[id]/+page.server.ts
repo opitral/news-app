@@ -54,5 +54,19 @@ export const actions = {
 		}
 
 		return {};
+	},
+
+	async delete_comment(event) {
+		const formData = await event.request.formData();
+		const commentId = formData.get('commentId') as string;
+
+		const newsApiConnector = new NewsApiConnector(event);
+
+		if (commentId) {
+			const { result } = await newsApiConnector.deleteComment(event.params.id, commentId);
+			if (!result) return fail(400);
+		}
+
+		return {};
 	}
 } satisfies Actions;
