@@ -23,8 +23,8 @@
 	<div class="flex flex-col gap-5">
 		{#each data.news as item}
 			<a href="/news/{item.id}">
-				<Card class="flex gap-5">
-					<div class="aspect-square size-32 overflow-hidden rounded-md">
+				<Card class="flex gap-5 max-md:flex-col">
+					<div class="aspect-video shrink-0 overflow-hidden rounded-md md:aspect-square md:size-32">
 						{#if item.image}
 							<img src={item.image} class="size-full object-cover" alt="" />
 						{:else if item.video}
@@ -50,7 +50,7 @@
 						<p class=" text-wrap">{item.content}</p>
 					</div>
 
-					<div class="flex grow flex-col items-end justify-between">
+					<div class="flex grow flex-row-reverse items-end justify-between md:flex-col">
 						<p class="text-sm text-gray-500">{getRelativeTime(item.createdAt)}</p>
 
 						<div class=" flex items-center gap-3 self-end">

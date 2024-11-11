@@ -20,7 +20,6 @@ type NewsItem = NewsCreate & {
     views: number;
     comments: number;
     createdAt: string;
-    isLiked: boolean;
 }
 
 type CommentItem = {
@@ -32,6 +31,7 @@ type CommentItem = {
 
 type NewsItemFull = Omit<NewsItem, 'comments'> & {
     comments: CommentItem[];
+    isLiked: boolean;
 }
 
 type NewsData = {

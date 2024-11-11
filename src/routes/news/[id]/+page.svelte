@@ -7,6 +7,7 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 
 	interface Props {
 		data: PageData;
@@ -16,28 +17,35 @@
 
 	let mounted = $state(false);
 
-
 	onMount(() => {
 		mounted = true;
 	});
+
+	function goBack() {
+		if (window.history.length > 1) {
+      history.back();
+    } else {
+      goto('/');
+    }
+	}
 
 	// console.log(data);
 </script>
 
 {#snippet stat(Icon: any, value: number)}
-	<div class="flex items-center gap-2">
-		<Icon class="size-5 text-gray-500" />
-		<span class="text-lg text-gray-500">{value}</span>
+	<div class="flex items-center gap-1 md:gap-2">
+		<Icon class="size-4 text-gray-500 md:size-5" />
+		<span class="text-gray-500 md:text-lg">{value}</span>
 	</div>
 {/snippet}
 
 <Wrapper class="mt-10">
 	<Card class="flex flex-col gap-5">
 		<div class="flex items-center justify-between">
-			<a href="/" class="flex items-center gap-2">
+			<button onclick={goBack} class="flex items-center gap-2">
 				<ArrowLeft class="size-6" />
 				<span class="font-medium">Main page</span>
-			</a>
+			</button>
 
 			{#if mounted}
 				<form
@@ -62,45 +70,41 @@
 			{/if}
 		</div>
 
-		<div class="grid grid-cols-2 gap-5">
-			<div class="overflow-hidden rounded-md">
+		<!-- <div>
+			<img class="float-left aspect-square w-1/2" src={data.image || '/no-media.svg'} alt="" />
+			<p class="">{data.content}</p>
+		</div> -->
+
+		<div class="">
+			<div class="mr-5 aspect-square w-full overflow-hidden rounded-md md:float-left md:w-1/2">
 				{#if data.video}
-					<svg
-						class="size-full"
-						viewBox="0 0 512 512"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<rect width="512" height="512" fill="#DDDDDD" />
-						<path
-							d="M335 247.34C341.667 251.189 341.667 260.811 335 264.66L224 328.746C217.333 332.595 209 327.784 209 320.086L209 191.914C209 184.216 217.333 179.405 224 183.254L335 247.34Z"
-							fill="#999999"
-						/>
-					</svg>
+					<video class="size-full object-cover" src={data.video} controls>
+						<track kind="captions" />
+					</video>
 				{:else}
 					<img class="size-full object-cover" src={data.image || '/no-media.svg'} alt="" />
 				{/if}
 			</div>
 
-			<div>
-				<h3 class="text-3xl font-medium">{data.title}</h3>
-				<p class="text-lg">{data.content}</p>
-			</div>
+			<!-- <div class="inline-block"> -->
+			<h3 class="text-xl font-medium max-md:pt-5 md:text-3xl">{data.title}</h3>
+			<p class="mt-2 text-lg">{data.content}</p>
+			<!-- </div> -->
 		</div>
 
 		<div class="flex grow items-end justify-between">
-			<div class=" datas-center flex gap-3 self-end">
+			<div class="flex items-center gap-3 self-end">
 				{@render stat(Eye, data.views)}
 				{@render stat(Heart, data.likes)}
 				{@render stat(MessageSquare, data.comments.length)}
 			</div>
 
-			<p class="text-lg text-gray-500">{getRelativeTime(data.createdAt)}</p>
+			<p class="text-gray-500 md:text-lg">{getRelativeTime(data.createdAt)}</p>
 		</div>
 	</Card>
 
 	<Card class="my-10">
-		<h3 class="text-xl font-medium">Comments</h3>
+		<h3 class="text-md font-medium md:text-xl">Comments</h3>
 		<div class="divide-y divide-gray-200 py-2">
 			{#each data.comments as comment}
 				<div class="flex flex-col py-2">
@@ -109,7 +113,7 @@
 						<p>{getRelativeTime(comment.date)}</p>
 					</div>
 
-					<p class="mt-1 text-lg">{comment.content}</p>
+					<p class="mt-1 md:text-lg">{comment.content}</p>
 				</div>
 			{:else}
 				<p class="my-5 text-gray-500 text-center">No comments</p>
@@ -117,7 +121,7 @@
 		</div>
 
 		<form
-			class="flex items-center gap-3"
+			class="flex gap-3"
 			action="?/submit_comment"
 			id="form-comment"
 			method="POST"
@@ -131,14 +135,14 @@
 		>
 			<input
 				name="comment"
-				class="w-full rounded-md border border-gray-200 p-3"
+				class="w-full rounded-md border border-gray-200 px-2"
 				type="text"
 				placeholder="Write a comment..."
 				required
 			/>
 
-			<button class="shrink-0 rounded-md bg-slate-500 p-3 text-white">
-				<Send class="size-6" />
+			<button class="shrink-0 rounded-md bg-slate-500 p-2 md:p-3 text-white">
+				<Send class="size-5 md:size-6" />
 			</button>
 		</form>
 	</Card>
